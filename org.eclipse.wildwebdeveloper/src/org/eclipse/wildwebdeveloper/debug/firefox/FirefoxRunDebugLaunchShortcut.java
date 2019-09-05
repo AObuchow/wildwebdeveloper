@@ -56,7 +56,7 @@ public class FirefoxRunDebugLaunchShortcut implements ILaunchShortcut2 {
 				return null;
 			}
 			Object firstObject = structuredSelection.getFirstElement();
-			IResource resource = Adapters.adapt(firstObject, IResource.class);
+			IResource resource =  Adapters.adapt(firstObject, IResource.class);
 			return resource;
 		}
 		return null;

@@ -544,11 +544,25 @@
                   <iterate>
                      <adapt
                            type="org.eclipse.core.resources.IResource">
+                        <test
+                              forcePluginActivation="true"
+                              property="org.eclipse.wildwebdeveloper.isHTMLProject">
+                        </test>
                      </adapt>
                   </iterate>
                </with></enablement>
          </contextualLaunch>
       </shortcut>
+   </extension>
+    <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.core.resources.IResource"
+            class="org.eclipse.wildwebdeveloper.debug.firefox.FirefoxLaunchableAdapterFactory">
+         <adapter
+               type="org.eclipse.debug.ui.actions.ILaunchable">
+         </adapter>
+      </factory>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -557,6 +571,13 @@
             id="org.eclipse.wildwebdeveloper.propertyTester.isNodeResource"
             namespace="org.eclipse.wildwebdeveloper"
             properties="isNodeResource"
+            type="java.lang.Object">
+      </propertyTester>
+      <propertyTester
+            class="org.eclipse.wildwebdeveloper.debug.firefox.Tester"
+            id="org.eclipse.wildwebdeveloper.propertyTester.isHTMLProject"
+            namespace="org.eclipse.wildwebdeveloper"
+            properties="isHTMLProject"
             type="java.lang.Object">
       </propertyTester>
    </extension>
@@ -573,7 +594,7 @@
             id="org.eclipse.wildwebdeveloper.nodeImage">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
-            configTypeID="org.eclipse.wildwebdeveloper.launchConfigurationType1"
+            configTypeID="org.eclipse.wildwebdeveloper.runFirefoxDebug"
             icon="icons/firefoxIconSmall.png"
             id="org.eclipse.wildwebdeveloper.firefoxImage">
       </launchConfigurationTypeImage>
@@ -598,7 +619,7 @@
       <launchConfigurationTabGroup
             class="org.eclipse.wildwebdeveloper.debug.firefox.FirefoxRunDebugTabGroup"
             id="org.eclipse.wildwebdeveloper.nodeTabGroup"
-            type="org.eclipse.wildwebdeveloper.launchConfigurationType1">
+            type="org.eclipse.wildwebdeveloper.runFirefoxDebug">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             class="org.eclipse.wildwebdeveloper.debug.firefox.FirefoxAttachDebugTabGroup"
