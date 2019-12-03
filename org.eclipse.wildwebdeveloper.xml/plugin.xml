@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="xmllsExtension" name="%ExtPoint.xmllsExtension" schema="schema/xmllsExtension.exsd"/>
+   <extension-point id="xmllsClasspathExtensionProvider" name="%ExtPoint.xmllsClasspathExtensionProvider" schema="schema/xmllsClasspathExtensionProvider.exsd"/>
    <!-- Wild Web Developer/Core -->
    <!-- Duplicate or org.eclipse.wildwebdeveloper -->
    <extension
@@ -143,6 +144,18 @@
             contentType="org.eclipse.wildwebdeveloper.xml"
             icon="icons/xmlEditorIcon.png">
       </icon>
+   </extension>
+   <extension
+         point="org.eclipse.wildwebdeveloper.xml.xmllsExtension">
+      <jar
+            path="language-servers/server/org.eclipse.lsp4xml.extensions.maven-0.9.1_SHOULD_BREAK.jar">
+      </jar>
+   </extension>
+   <extension
+         point="org.eclipse.wildwebdeveloper.xml.xmllsClasspathExtensionProvider">
+      <classpathExtensionProvider
+            provider="org.eclipse.wildwebdeveloper.xml.MavenArtifactClassPathProvider">
+      </classpathExtensionProvider>
    </extension>
 
 </plugin>

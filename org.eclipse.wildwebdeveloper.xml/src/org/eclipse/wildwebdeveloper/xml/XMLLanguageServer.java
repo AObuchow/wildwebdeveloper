@@ -39,11 +39,15 @@ public class XMLLanguageServer extends ProcessStreamConnectionProvider {
 		try {
 			URL url = FileLocator
 					.toFileURL(getClass().getResource("/language-servers/server/org.eclipse.lsp4xml-0.9.1-uber.jar"));
+			List<String> classPathExtensions = this.getClassPathExtensions();
 			List<String> extensionJarPaths = getExtensionJarPaths();
 			String uberJarPath = new java.io.File(url.getPath()).getAbsolutePath();
 			jarPaths.add(uberJarPath);
 			jarPaths.addAll(extensionJarPaths);
+			jarPaths.addAll(classPathExtensions);
 			commands.add(String.join(System.getProperty("path.separator"), jarPaths));
+			// TODO: Remove before merging
+			System.out.println(String.join(System.getProperty("path.separator"), jarPaths));
 			commands.add("org.eclipse.lsp4xml.XMLServerLauncher");
 			setCommands(commands);
 			setWorkingDirectory(System.getProperty("user.dir"));
@@ -63,6 +67,11 @@ public class XMLLanguageServer extends ProcessStreamConnectionProvider {
 	private List<String> getExtensionJarPaths() {
 		XMLExtensionRegistry extensionJarRegistry = new XMLExtensionRegistry();
 		return extensionJarRegistry.getXMLExtensionJars();
+	}
+
+	private List<String> getClassPathExtensions() {
+		XMLLSClassPathExtensionRegistry classpathExtensionRegistry = new XMLLSClassPathExtensionRegistry();
+		return classpathExtensionRegistry.getXMLLSClassPathExtensions();
 	}
 
 	private String computeJavaPath() {
