@@ -13,12 +13,13 @@
 package org.eclipse.wildwebdeveloper.xml;
 
 import java.io.File;
+import java.util.List;
+import java.util.function.Supplier;
 
-public class MavenArtifactClassPathProvider implements XMLLSClasspathExtensionProvider {
-
-	@Override
-	public File get() {
-		return BundleResolver.getBundleResource("org.eclipse.m2e.maven.runtime", "/jars/maven-artifact-3.6.1.jar");
-	}
+/**
+ * @since 0.9.0
+ *
+ */
+public interface XMLLSClasspathExtensionProviders extends Supplier<List<File>> {
 
 }

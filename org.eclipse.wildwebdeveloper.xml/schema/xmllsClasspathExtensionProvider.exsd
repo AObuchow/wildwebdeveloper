@@ -17,9 +17,9 @@
          </appinfo>
       </annotation>
       <complexType>
-         <sequence>
+         <choice>
             <element ref="classpathExtensionProvider" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
+         </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
@@ -49,13 +49,23 @@
 
    <element name="classpathExtensionProvider">
       <complexType>
-         <attribute name="provider" type="string" use="required">
+         <attribute name="provider" type="string">
             <annotation>
                <documentation>
                   
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.wildwebdeveloper.xml.XMLLSClasspathExtensionProvider"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="providers" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.wildwebdeveloper.xml.XMLLSClasspathExtensionProviders"/>
                </appinfo>
             </annotation>
          </attribute>

@@ -13,6 +13,7 @@
 package org.eclipse.wildwebdeveloper.xml;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,7 +29,8 @@ import org.eclipse.core.runtime.Status;
 
 public class XMLLSClassPathExtensionRegistry {
 	private static final String EXTENSION_POINT_ID = Activator.PLUGIN_ID + ".xmllsClasspathExtensionProvider"; //$NON-NLS-1$
-	private Map<IConfigurationElement, XMLLSClasspathExtensionProvider> extensions = new HashMap<>();
+	private Map<IConfigurationElement, XMLLSClasspathExtensionProviders> listExtensions = new HashMap<>();
+	private Map<IConfigurationElement, XMLLSClasspathExtensionProvider> singleExtensions = new HashMap<>();
 	private boolean outOfSync = true;
 
 	public XMLLSClassPathExtensionRegistry() {
@@ -40,35 +42,49 @@ public class XMLLSClassPathExtensionRegistry {
 			sync();
 		}
 
-		// TODO: Maybe a try/catch should be used in the event that the
-		// classpathProvider throws an exception?
-		return this.extensions.entrySet().stream()
+		List<String> classpathExtensions = new ArrayList<>();
+		this.listExtensions.entrySet().stream()
+				.map(Entry<IConfigurationElement, XMLLSClasspathExtensionProviders>::getValue)
+				.map(XMLLSClasspathExtensionProviders::get)
+				.forEach(list -> list.forEach(jar -> classpathExtensions.add(jar.getAbsolutePath())));
+
+		classpathExtensions.addAll(this.singleExtensions.entrySet().stream()
 				.map(Entry<IConfigurationElement, XMLLSClasspathExtensionProvider>::getValue)
-				.map(XMLLSClasspathExtensionProvider::get).map(File::getAbsolutePath)
-				.collect(Collectors.toList());
+				.map(XMLLSClasspathExtensionProvider::get).map(File::getAbsolutePath).collect(Collectors.toList()));
+		return classpathExtensions;
 	}
 
 	private void sync() {
-		Set<IConfigurationElement> toRemoveExtensions = new HashSet<>(this.extensions.keySet());
+		Set<IConfigurationElement> toRemoveExtensions = new HashSet<>(this.listExtensions.keySet());
 		for (IConfigurationElement extension : Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(EXTENSION_POINT_ID)) {
 			toRemoveExtensions.remove(extension);
-			if (!this.extensions.containsKey(extension)) {
+			if (!this.listExtensions.containsKey(extension)) {
 				try {
-					// TODO: Consider if we really need to keep the IConfigurationElements
-					final Object executableExtension = extension.createExecutableExtension("provider");
-					if (executableExtension instanceof XMLLSClasspathExtensionProvider) {
-						this.extensions.put(extension, (XMLLSClasspathExtensionProvider) executableExtension);
+					// NOTE: using an else-if means that an extension must contribute the providers
+					// attribute XOR provider attribute
+					if (extension.getAttribute("providers") != null) {
+						final Object executableExtension = extension.createExecutableExtension("providers");
+						if (executableExtension instanceof XMLLSClasspathExtensionProviders) {
+							this.listExtensions.put(extension, (XMLLSClasspathExtensionProviders) executableExtension);
+						}
+					} else if (extension.getAttribute("provider") != null) {
+						final Object executableExtension = extension.createExecutableExtension("provider");
+						if (executableExtension instanceof XMLLSClasspathExtensionProvider) {
+							this.singleExtensions.put(extension, (XMLLSClasspathExtensionProvider) executableExtension);
+						}
 					}
-
 				} catch (Exception ex) {
 					Activator.getDefault().getLog()
 							.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, ex.getMessage(), ex));
+
 				}
 			}
 		}
 		for (IConfigurationElement toRemove : toRemoveExtensions) {
-			this.extensions.remove(toRemove);
+			// TODO: Now that we're dealing with two lists of extensions, this code needs to
+			// take that into consideration
+			this.listExtensions.remove(toRemove);
 		}
 		this.outOfSync = false;
 	}

@@ -148,14 +148,8 @@
    <extension
          point="org.eclipse.wildwebdeveloper.xml.xmllsExtension">
       <jar
-            path="language-servers/server/org.eclipse.lsp4xml.extensions.maven-0.9.1_SHOULD_BREAK.jar">
+            path="language-servers/server/org.eclipse.lsp4xml.extensions.maven-0.9.1.jar">
       </jar>
-   </extension>
-   <extension
-         point="org.eclipse.wildwebdeveloper.xml.xmllsClasspathExtensionProvider">
-      <classpathExtensionProvider
-            provider="org.eclipse.wildwebdeveloper.xml.MavenArtifactClassPathProvider">
-      </classpathExtensionProvider>
    </extension>
 
 </plugin>
